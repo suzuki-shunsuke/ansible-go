@@ -1,0 +1,5 @@
+---
+# defaults file for go
+go_version: 1.7.1
+go_os: linux
+go_arch: amd64

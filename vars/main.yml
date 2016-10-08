@@ -1,0 +1,3 @@
+---
+# vars file for go
+go_nonroot: "{{ (ansible_env.HOME == '/root') | ternary('no', 'yes') }}"

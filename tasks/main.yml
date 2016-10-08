@@ -1,0 +1,26 @@
+---
+# tasks file for go
+- name: Remove files.
+  file:
+    state: absent
+    path: "/tmp/{{ item }}"
+  with_items:
+  - "go{{ go_version }}.{{ go_os }}-{{ go_arch }}.tar.gz"
+  - go
+- name: Download the package.
+  get_url:
+    url: "https://storage.googleapis.com/golang/go{{ go_version }}.{{ go_os }}-{{ go_arch }}.tar.gz"
+    dest: /tmp
+    mode: 0777
+- name: Install go
+  command: "tar -C /usr/local -xvzf /tmp/go{{ go_version }}.{{ go_os }}-{{ go_arch }}.tar.gz"
+  become: "{{ go_nonroot }}"
+- name: Remove files.
+  file:
+    state: absent
+    path: "/tmp/{{ item }}"
+  with_items:
+  - "go{{ go_version }}.{{ go_os }}-{{ go_arch }}.tar.gz"
+  - go
+- name: Notice
+  debug: msg="export PATH=$PATH:/usr/local/go/bin"
