@@ -8,14 +8,16 @@ dist: trusty
 addons:
   apt:
     sources:
-    - sourceline: ppa:ansible/ansible
+      - sourceline: ppa:ansible/ansible
     packages:
-    - ansible
+      - ansible
 
-before_install: cd tests
+before_script:
+  - ansible --version
+  - cd tests
 
 script:
-- ansible-playbook test.yml
+  - ansible-playbook -i localhost test.yml
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

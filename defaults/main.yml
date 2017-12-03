@@ -1,5 +1,7 @@
 ---
 # defaults file for go
-go_version: 1.7.1
 go_os: linux
 go_arch: amd64
+go_bin_dir: /usr/local/bin
+go_lib_dir: /usr/local/lib
+go_create_link: yes
