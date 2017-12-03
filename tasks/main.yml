@@ -18,7 +18,7 @@
       remote_src: yes
     become: no
     when: not rgst_stat_downloaded.stat.exists
-  - name: create install directory
+  - name: create go_lib_dir
     file:
       state: directory
       dest: "{{go_lib_dir}}"
@@ -31,15 +31,19 @@
       path: "{{go_lib_dir}}/go"
     register: rgst_go_link
     become: no
-  - name: remove the symbolic link
-    file:
-      state: absent
-      path: "{{go_lib_dir}}/go"
-    when: rgst_go_link.stat.exists and (not rgst_go_link.stat.islnk or rgst_go_link.stat.lnk_source != "{}/go-{}".format(go_lib_dir, go_version))
   - name: create the symbolic link
     file:
       state: link
-      src: "{{go_lib_dir}}/go-{{go_version}}/bin/{{item}}"
+      src: "{{go_lib_dir}}/go-{{go_version}}"
+      dest: "{{go_lib_dir}}/go"
+  - name: create go_bin_dir
+    file:
+      state: directory
+      dest: "{{go_bin_dir}}"
+  - name: create symbolic links
+    file:
+      state: link
+      src: "{{go_lib_dir}}/go/bin/{{item}}"
       dest: "{{go_bin_dir}}/{{item}}"
     with_items:
       - go
