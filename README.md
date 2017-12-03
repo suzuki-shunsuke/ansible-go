@@ -30,10 +30,11 @@ go_create_link | no | yes | whether create symbolic links or not
       go
       godoc
       gofmt
+  go/ -> {{go_lib_dir}}/go-{{go_version}} (symbolic link)
 {{go_bin_dir}}/
-  go -> {{go_lib_dir}}/go-{{go_version}}/bin/go (symbolic link)
-  godoc -> {{go_lib_dir}}/go-{{go_version}}/bin/godoc (symbolic link)
-  gofmt -> {{go_lib_dir}}/go-{{go_version}}/bin/gofmt (symbolic link)
+  go -> {{go_lib_dir}}/go/bin/go (symbolic link)
+  godoc -> {{go_lib_dir}}/go/bin/godoc (symbolic link)
+  gofmt -> {{go_lib_dir}}/go/bin/gofmt (symbolic link)
 ```
 
 ## Dependencies

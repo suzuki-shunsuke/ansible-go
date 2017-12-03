@@ -7,7 +7,7 @@
       become: yes
     - role: ansible-go
       go_version: 1.9.1
-      go_create_link: no
+      # go_create_link: no
       become: yes
   tasks:
     - command: /usr/local/bin/go version
