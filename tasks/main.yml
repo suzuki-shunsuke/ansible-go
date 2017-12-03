@@ -1,26 +1,48 @@
 ---
-# tasks file for go
-- name: Remove files.
-  file:
-    state: absent
-    path: "/tmp/{{ item }}"
-  with_items:
-  - "go{{ go_version }}.{{ go_os }}-{{ go_arch }}.tar.gz"
-  - go
-- name: Download the package.
-  get_url:
-    url: "https://storage.googleapis.com/golang/go{{ go_version }}.{{ go_os }}-{{ go_arch }}.tar.gz"
-    dest: /tmp
-    mode: 0777
-- name: Install go
-  command: "tar -C /usr/local -xvzf /tmp/go{{ go_version }}.{{ go_os }}-{{ go_arch }}.tar.gz"
-  become: "{{ go_nonroot }}"
-- name: Remove files.
-  file:
-    state: absent
-    path: "/tmp/{{ item }}"
-  with_items:
-  - "go{{ go_version }}.{{ go_os }}-{{ go_arch }}.tar.gz"
-  - go
-- name: Notice
-  debug: msg="export PATH=$PATH:/usr/local/go/bin"
+- name: check whether the binary has already installed
+  stat:
+    path: "{{go_lib_dir}}/go-{{go_version}}"
+  register: rgst_stat_binary
+  become: no
+- block:
+  - name: check whether the binary has already downloaded
+    stat:
+      path: /tmp/go
+    register: rgst_stat_downloaded
+    become: no
+  - name: download and unarchive package
+    unarchive:
+      src: https://storage.googleapis.com/golang/go{{go_version}}.{{go_os}}-{{go_arch}}.tar.gz
+      dest: /tmp
+      keep_newer: yes
+      remote_src: yes
+    become: no
+    when: not rgst_stat_downloaded.stat.exists
+  - name: create install directory
+    file:
+      state: directory
+      dest: "{{go_lib_dir}}"
+  - name: install go
+    command: mv /tmp/go {{go_lib_dir}}/go-{{go_version}}
+  when: not rgst_stat_binary.stat.exists
+- block:
+  - name: check the symbolic to the binary
+    stat:
+      path: "{{go_lib_dir}}/go"
+    register: rgst_go_link
+    become: no
+  - name: remove the symbolic link
+    file:
+      state: absent
+      path: "{{go_lib_dir}}/go"
+    when: rgst_go_link.stat.exists and (not rgst_go_link.stat.islnk or rgst_go_link.stat.lnk_source != "{}/go-{}".format(go_lib_dir, go_version))
+  - name: create the symbolic link
+    file:
+      state: link
+      src: "{{go_lib_dir}}/go-{{go_version}}/bin/{{item}}"
+      dest: "{{go_bin_dir}}/{{item}}"
+    with_items:
+      - go
+      - godoc
+      - gofmt
+  when: go_create_link

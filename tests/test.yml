@@ -1,12 +1,16 @@
 ---
-- hosts: localhost
-  connection: local
+- hosts: all
   roles:
-  - role: ansible-go
-    go_version: 1.6.1
-    go_os: linux
-    go_arch: amd64
+    - role: ansible-go
+      go_version: 1.9.2
+      go_create_link: yes
+      become: yes
+    - role: ansible-go
+      go_version: 1.9.1
+      go_create_link: no
+      become: yes
   tasks:
-  - command: /usr/local/go/bin/go version
-    register: result
-  - debug: var=result
+    - command: /usr/local/bin/go version
+      register: result
+    - debug:
+        var: result

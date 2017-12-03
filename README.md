@@ -1,41 +1,55 @@
-go
-=========
+# ansible-go
 
 [![Build Status](https://travis-ci.org/suzuki-shunsuke/ansible-go.svg?branch=master)](https://travis-ci.org/suzuki-shunsuke/ansible-go)
 
-Install Go on Linux.
+ansible role to install Go.
 
 https://galaxy.ansible.com/suzuki-shunsuke/go/
 
-Requirements
-------------
+## Requirements
 
 Nothing.
 
-Role Variables
---------------
+## Role Variables
 
-* go_nonroot: Whether the remote_user is root or not. This variable is set automatically, and is used to execute tasks with the become option.
-* go_version: The Go version. The default value is 1.7.1.
-* go_os: The OS type("linux", "darwin", "freebsd", "windows"). The default value is "linux".
-* go_arch: "amd64" or "386" or "armv6l" or "s390x". The default value is "amd64".
+name | required | default | description
+--- | --- | --- | ---
+go_version | yes |  | Installed Go version
+go_os | no | linux | OS type ("linux", "darwin", "freebsd", "windows")
+go_arch | no | amd64 | "amd64" or "386" or "armv6l" or "s390x"
+go_bin_dir | no | /usr/local/bin |
+go_lib_dir | no | /usr/local/lib |
+go_create_link | no | yes | whether create symbolic links or not
 
-Dependencies
-------------
+## Directory Structure
+
+```
+{{go_lib_dir}}/
+  go-{{go_version}}/
+    bin/
+      go
+      godoc
+      gofmt
+{{go_bin_dir}}/
+  go -> {{go_lib_dir}}/go-{{go_version}}/bin/go (symbolic link)
+  godoc -> {{go_lib_dir}}/go-{{go_version}}/bin/godoc (symbolic link)
+  gofmt -> {{go_lib_dir}}/go-{{go_version}}/bin/gofmt (symbolic link)
+```
+
+## Dependencies
 
 Nothing.
 
-Example Playbook
-----------------
+## Example Playbook
 
 ```yaml
 - hosts: servers
   roles:
-  - role: suzuki-shunsuke.go
-    go_version: 1.6.1
+    - role: suzuki-shunsuke.go
+      go_version: 1.9.2
+      become: yes
 ```
 
-License
--------
+## License
 
-MIT
+[MIT](LICENSE)
